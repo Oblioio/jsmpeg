@@ -37,9 +37,13 @@ var Player = function(url, options) {
 			? new JSMpeg.Decoder.MPEG1VideoWASM(options)
 			: new JSMpeg.Decoder.MPEG1Video(options);
 
-		this.renderer = !options.disableGl && JSMpeg.Renderer.WebGL.IsSupported()
-			? new JSMpeg.Renderer.WebGL(options)
-			: new JSMpeg.Renderer.Canvas2D(options);
+		if (options.renderer) {
+			this.renderer = new options.renderer(options);
+		} else {
+			this.renderer = !options.disableGl && JSMpeg.Renderer.WebGL.IsSupported()
+				? new JSMpeg.Renderer.WebGL(options)
+				: new JSMpeg.Renderer.Canvas2D(options);
+		}
 		
 		this.demuxer.connect(JSMpeg.Demuxer.TS.STREAM.VIDEO_1, this.video);
 		this.video.connect(this.renderer);
